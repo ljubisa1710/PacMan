@@ -32,7 +32,7 @@ function aStar(start, goal) {
         // Otherwise, remove current from openSet
         openSet = openSet.filter(node => !(node.x === current.x && node.y === current.y));
         // Get neighbours of the current node
-        let neighbours = getNeighbours(current);
+        let neighbours = getNeighbours(current, start);
 
         // For each neighbor of current
         for (let i = 0; i < neighbours.length; i++) {
@@ -58,17 +58,20 @@ function heuristic(node, goal) {
     return Math.abs(node.x - goal.x) + Math.abs(node.y - goal.y);
 }
 
-// This function will return an array of all the valid neighbours (up, down, left, right) of a given node
-function getNeighbours(node) {
+function getNeighbours(node, ghost) {
     let neighbours = [];
     
-    if (grid[node.x - 1][node.y] !== 1) neighbours.push({ x: node.x - 1, y: node.y });
-    if (grid[node.x + 1][node.y] !== 1) neighbours.push({ x: node.x + 1, y: node.y });
-    if (grid[node.x][node.y - 1] !== 1) neighbours.push({ x: node.x, y: node.y - 1 });
-    if (grid[node.x][node.y + 1] !== 1) neighbours.push({ x: node.x, y: node.y + 1 });
-    
+    let prevX = ghost.prevX;
+    let prevY = ghost.prevY;
+
+    if (node.x - 1 !== prevX || node.y !== prevY) if (grid[node.x - 1][node.y] !== 1) neighbours.push({ x: node.x - 1, y: node.y });
+    if (node.x + 1 !== prevX || node.y !== prevY) if (grid[node.x + 1][node.y] !== 1) neighbours.push({ x: node.x + 1, y: node.y });
+    if (node.x !== prevX || node.y - 1 !== prevY) if (grid[node.x][node.y - 1] !== 1) neighbours.push({ x: node.x, y: node.y - 1 });
+    if (node.x !== prevX || node.y + 1 !== prevY) if (grid[node.x][node.y + 1] !== 1) neighbours.push({ x: node.x, y: node.y + 1 });
+
     return neighbours;
 }
+
 
 // This function will return the shortest path found from start to goal by retracing the path from goal to start
 function reconstructPath(cameFrom, current) {

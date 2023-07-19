@@ -1,8 +1,10 @@
 // Blinky's properties
 let blinky = {
-    x: 13, // Blinky's x-coordinate
-    y: 17, // Blinky's y-coordinate
-    dir: 'LEFT', // Blinky's initial direction
+    x: 1, // Blinky's x-coordinate
+    y: 1, // Blinky's y-coordinate
+    dir: 'RIGHT',
+    prevX: -1,
+    prevY: -1
 };
   
 function blinkyFollowPath(path) {
@@ -34,6 +36,8 @@ function blinkyFollowPath(path) {
 
         // Check if the new position is a wall
         if (grid[newX][newY] !== 1) {
+            blinky.prevX = blinky.x
+            blinky.prevY = blinky.y
             blinky.x = newX;
             blinky.y = newY;
         }
@@ -41,6 +45,27 @@ function blinkyFollowPath(path) {
         // If Blinky has reached the next node, remove it from the path
         if (blinky.x == nextNode.x && blinky.y == nextNode.y) {
             path.pop();
+        }
+    } else {
+        let newX = blinky.x;
+        let newY = blinky.y;
+
+        if (blinky.dir === 'LEFT') {
+            newX--;
+        } else if (blinky.dir === 'RIGHT') {
+            newX++;
+        } else if (blinky.dir === 'UP') {
+            newY--;
+        } else if (blinky.dir === 'DOWN') {
+            newY++;
+        }
+
+        // Check if the new position is a wall and within array bounds
+        if (isValidMove(newX, newY)) {
+            blinky.prevX = blinky.x
+            blinky.prevY = blinky.y
+            blinky.x = newX;
+            blinky.y = newY;
         }
     }
 }
