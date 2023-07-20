@@ -3,8 +3,8 @@ let inky = {
     x: 26, // inky's x-coordinate
     y: 29, // inky's y-coordinate
     dir: 'LEFT',
-    prevX: -1,
-    prevY: -1
+    prevX: 26,
+    prevY: 29
 };
 
 function isValidMove(x, y) {
@@ -145,8 +145,8 @@ function drawInky() {
 // Function to draw a path using the A* algorithm
 function inkyDrawPath(path) {
     for (let node of path) {
-      fill(0, 0, 255); // Blue color for the path
-      rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
+        fill(0, 0, 255); // Blue color for the path
+        rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
     }
-  }
+}
   

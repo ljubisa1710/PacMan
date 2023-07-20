@@ -1,7 +1,7 @@
 // A* algorithm to find the shortest path
-function aStar(start, goal) {
+function aStar(ghost, pacman) {
     // Initialize necessary arrays and objects
-    let openSet = [start];
+    let openSet = [ghost];
     let cameFrom = {};
     let gScore = {};
     let fScore = {};
@@ -14,25 +14,25 @@ function aStar(start, goal) {
         }
     }
 
-    // The cost of the start position is 0
-    gScore[`${start.x},${start.y}`] = 0;
-    // For the start node, the fScore is completely heuristic
-    fScore[`${start.x},${start.y}`] = heuristic(start, goal);
+    // The cost of the ghost position is 0
+    gScore[`${ghost.x},${ghost.y}`] = 0;
+    // For the ghost node, the fScore is completely heuristic
+    fScore[`${ghost.x},${ghost.y}`] = heuristic(ghost, pacman);
 
     // While there are still nodes to evaluate
     while (openSet.length > 0) {
         // Get the node in openSet having the lowest fScore[] value
         let current = openSet.reduce((a, b) => fScore[`${a.x},${a.y}`] < fScore[`${b.x},${b.y}`] ? a : b);
 
-        // If the current node is the goal, then we are done
-        if (current.x === goal.x && current.y === goal.y) {
+        // If the current node is the pacman, then we are done
+        if (current.x === pacman.x && current.y === pacman.y) {
             return reconstructPath(cameFrom, current);
         }
 
         // Otherwise, remove current from openSet
         openSet = openSet.filter(node => !(node.x === current.x && node.y === current.y));
         // Get neighbours of the current node
-        let neighbours = getNeighbours(current, start);
+        let neighbours = getNeighbours(current, ghost);
 
         // For each neighbor of current
         for (let i = 0; i < neighbours.length; i++) {
@@ -43,7 +43,7 @@ function aStar(start, goal) {
             if (tentativeGScore < gScore[`${neighbour.x},${neighbour.y}`]) {
                 cameFrom[`${neighbour.x},${neighbour.y}`] = current;
                 gScore[`${neighbour.x},${neighbour.y}`] = tentativeGScore;
-                fScore[`${neighbour.x},${neighbour.y}`] = gScore[`${neighbour.x},${neighbour.y}`] + heuristic(neighbour, goal);
+                fScore[`${neighbour.x},${neighbour.y}`] = gScore[`${neighbour.x},${neighbour.y}`] + heuristic(neighbour, pacman);
                 // If neighbour not in openSet, add it
                 if (!openSet.some(node => node.x === neighbour.x && node.y === neighbour.y)) {
                     openSet.push(neighbour);
@@ -53,9 +53,9 @@ function aStar(start, goal) {
     }
 }
 
-// Heuristic function estimates the cost to reach goal from node n.
-function heuristic(node, goal) {
-    return Math.abs(node.x - goal.x) + Math.abs(node.y - goal.y);
+// Heuristic function estimates the cost to reach pacman from node n.
+function heuristic(node, pacman) {
+    return Math.abs(node.x - pacman.x) + Math.abs(node.y - pacman.y);
 }
 
 function getNeighbours(node, ghost) {
@@ -73,7 +73,7 @@ function getNeighbours(node, ghost) {
 }
 
 
-// This function will return the shortest path found from start to goal by retracing the path from goal to start
+// This function will return the shortest path found from ghost to pacman by retracing the path from pacman to ghost
 function reconstructPath(cameFrom, current) {
     let totalPath = [current];
 

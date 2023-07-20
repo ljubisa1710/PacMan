@@ -95,7 +95,7 @@ function draw() {
     updateGhosts();
   }
 
-  // drawGhostPaths();
+  drawGhostPaths();
   drawEntities();
   handleKeys(); 
 
