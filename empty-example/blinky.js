@@ -8,6 +8,11 @@ let blinky = {
 };
 
 let blinkyPath;
+
+let blinkyImgUp;
+let blinkyImgDown;
+let blinkyImgLeft;
+let blinkyImgRight;
   
 function blinkyFollowPath(path) {
     if (path && path.length > 1) {
@@ -74,8 +79,22 @@ function blinkyFollowPath(path) {
   
 // Function to draw Blinky
 function drawBlinky() {
-    fill(255, 0, 0); // Red for Blinky
-    circle(blinky.x * 20 + 10, blinky.y * 20 + 10, 18);
+    switch(blinky.dir) {
+        case 'LEFT':
+            image(blinkyImgLeft, blinky.x * 20, blinky.y * 20, 20, 20);
+            break;
+        case 'RIGHT':
+            image(blinkyImgRight, blinky.x * 20, blinky.y * 20, 20, 20);
+            break;
+        case 'UP':
+            image(blinkyImgUp, blinky.x * 20, blinky.y * 20, 20, 20);
+            break;
+        case 'DOWN':
+            image(blinkyImgDown, blinky.x * 20, blinky.y * 20, 20, 20);
+            break;
+        default:
+            image(blinkyImgDown, blinky.x * 20, blinky.y * 20, 20, 20);
+    }
 }
 
 // Function to draw a path using the A* algorithm

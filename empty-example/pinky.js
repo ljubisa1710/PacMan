@@ -10,6 +10,7 @@ let pinky = {
 let pinkyTarget;
 let pinkyPath;
 
+
 // Function to calculate Pinky's target based on Pac-Man's direction
 function calculatePinkyTarget() {
     let target = {x: pacman.x, y: pacman.y}; // Initialize target to Pac-Man's current location
