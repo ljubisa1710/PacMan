@@ -1,5 +1,5 @@
 // Initialize Pac-Man object
-pacman = {
+let pacman = {
     x: 13, // Pac-Man's x-coordinate
     y: 11, // Pac-Man's y-coordinate
     dir: 'RIGHT', // Pac-Man's initial direction

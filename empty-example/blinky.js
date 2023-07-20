@@ -6,6 +6,8 @@ let blinky = {
     prevX: -1,
     prevY: -1
 };
+
+let blinkyPath;
   
 function blinkyFollowPath(path) {
     if (path && path.length > 1) {
@@ -78,9 +80,11 @@ function drawBlinky() {
 
 // Function to draw a path using the A* algorithm
 function blinkyDrawPath(path) {
-    for (let node of path) {
-      fill(255, 0, 0); // Red color for the path
-      rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
+    if (path) {
+        for (let node of path) {
+        fill(255, 0, 0); // Red color for the path
+        rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
+        }
     }
   }
   

@@ -7,6 +7,9 @@ let pinky = {
     prevY: -1
 };
 
+let pinkyTarget;
+let pinkyPath;
+
 // Function to calculate Pinky's target based on Pac-Man's direction
 function calculatePinkyTarget() {
     let target = {x: pacman.x, y: pacman.y}; // Initialize target to Pac-Man's current location
@@ -111,15 +114,17 @@ function pinkyFollowPath(path) {
   
 // Function to draw pinky
 function drawPinky() {
-    fill(0, 255, 0); // Green for pinky
+    fill(255, 192, 203); // Pink for pinky
     circle(pinky.x * 20 + 10, pinky.y * 20 + 10, 18);
 }
 
 // Function to draw a path using the A* algorithm
 function pinkyDrawPath(path) {
-    for (let node of path) {
-      fill(0, 255, 0); // Green color for the path
-      rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
+    if (path) {
+        for (let node of path) {
+        fill(255, 192, 203); // Pink color for the path
+        rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
+        }
     }
   }
   

@@ -7,6 +7,9 @@ let inky = {
     prevY: 29
 };
 
+let inkyPath;
+let inkyTarget;
+
 function isValidMove(x, y) {
     // Check array bounds
     if (x < 0 || y < 0 || x >= grid.length || y >= grid[0].length) {
@@ -144,9 +147,11 @@ function drawInky() {
 
 // Function to draw a path using the A* algorithm
 function inkyDrawPath(path) {
-    for (let node of path) {
-        fill(0, 0, 255); // Blue color for the path
-        rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
+    if (path) {
+        for (let node of path) {
+            fill(0, 0, 255); // Blue color for the path
+            rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
+        }
     }
 }
   
