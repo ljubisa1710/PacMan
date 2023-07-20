@@ -7,6 +7,7 @@ let target = {x: 13, y: 11}; // Initial target coordinates for Pac-Man
 let isFollowingPath = false; // Boolean to check if Pac-Man is currently following a path
 let path = []; // Array to store current path
 let allowedUpdatePositions = []; // Array to store allowed update positions for ghosts
+let showPath = false;
 
 function initializeGhosts() {
   blinkyPath = aStar(blinky, pacman); // Recalculate path with A* algorithm
@@ -86,13 +87,6 @@ function drawGhostPaths() {
   clydeDrawPath(clydePath);
 }
 
-// Function to handle mouse clicks
-function mouseClicked() {
-  let x = Math.floor(mouseX / 20);
-  let y = Math.floor(mouseY / 20);
-  console.log("Clicked tile coordinates: x =", x, ", y =", y);
-}
-
 // p5.js setup function that's called once at the beginning
 function setup() {
   createCanvas(560, 620); // Create canvas with specific size
@@ -103,6 +97,12 @@ function setup() {
 
   startTime = millis();
   initializeGhosts();
+
+  // Get the button element and set up the event handler
+  let vision_btn = select('#showPath');
+  vision_btn.mousePressed(() => {
+    showPath = !showPath; // Toggle the vision visibility state
+  });
 }
 
 // p5.js draw function that is called in a loop
@@ -120,7 +120,9 @@ function draw() {
     updateGhostsEveryJunction();
   }
 
-  drawGhostPaths();
+  if (showPath) {
+    drawGhostPaths();
+  }
   drawEntities();
   handleKeys(); 
 

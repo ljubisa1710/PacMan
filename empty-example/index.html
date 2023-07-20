@@ -12,7 +12,7 @@
       height: 100vh;
       padding: 0;
       margin: 0;
-      background-image: url("./pictures/the_rock.png");
+      background-image: url("./pictures/background.jpg");
       background-size:  2000px 1000px;
       background-repeat: no-repeat;
       background-position: center;
@@ -22,17 +22,25 @@
 
     #title {
       font-size: 50px;
-      margin: 20px; /* Adjust the margin value as needed */
-      color: black;
-      position: absolute;
-      top: 90px;
-      left: 625px;
+      color: rgb(255, 255, 255);
+      position: relative;
+      top: -82px;
+      right: 190px;
+    }
+
+    #showPath {
+      position: relative;
+      top: -77px;
+      left: 325px;
     }
 
     canvas {
       border: 1px solid white;
+      position: relative;
+      top: -100px
     }
   </style>
+
   <script src="../p5.min.js"></script>
   <script src="../addons/p5.sound.js"></script>
   <script src="sketch.js"></script>
@@ -43,8 +51,12 @@
   <script src="clyde.js"></script>
   <script src="pacman.js"></script>
   <script src="utility.js"></script>
+
 </head>
+
 <body>
   <div id="title">Pac-Man</div>
+  <button id="showPath">Show Path</button>
 </body>
+
 </html>
