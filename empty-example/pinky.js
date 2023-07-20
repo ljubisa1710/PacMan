@@ -10,6 +10,17 @@ let pinky = {
 let pinkyTarget;
 let pinkyPath;
 
+let pinkyImgUp;
+let pinkyImgDown;
+let pinkyImgLeft;
+let pinkyImgRight;
+
+function pinkyLoadImages() {
+    pinkyImgDown = loadImage('pictures/ghosts/pinky/pinky_down.png');
+    pinkyImgUp = loadImage('pictures/ghosts/pinky/pinky_up.png');
+    pinkyImgLeft = loadImage('pictures/ghosts/pinky/pinky_left.png');
+    pinkyImgRight = loadImage('pictures/ghosts/pinky/pinky_right.png');
+}
 
 // Function to calculate Pinky's target based on Pac-Man's direction
 function calculatePinkyTarget() {
@@ -113,17 +124,30 @@ function pinkyFollowPath(path) {
 }
   
   
-// Function to draw pinky
 function drawPinky() {
-    fill(255, 192, 203); // Pink for pinky
-    circle(pinky.x * 20 + 10, pinky.y * 20 + 10, 18);
+    switch(pinky.dir) {
+        case 'LEFT':
+            image(pinkyImgLeft, pinky.x * 20, pinky.y * 20, 20, 20);
+            break;
+        case 'RIGHT':
+            image(pinkyImgRight, pinky.x * 20, pinky.y * 20, 20, 20);
+            break;
+        case 'UP':
+            image(pinkyImgUp, pinky.x * 20, pinky.y * 20, 20, 20);
+            break;
+        case 'DOWN':
+            image(pinkyImgDown, pinky.x * 20, pinky.y * 20, 20, 20);
+            break;
+        default:
+            image(pinkyImgDown, pinky.x * 20, pinky.y * 20, 20, 20);
+    }
 }
 
 // Function to draw a path using the A* algorithm
 function pinkyDrawPath(path) {
     if (path) {
         for (let node of path) {
-        fill(255, 192, 203); // Pink color for the path
+        fill(255, 204, 255); // Pink color for the path
         rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
         }
     }

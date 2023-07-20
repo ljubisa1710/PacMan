@@ -35,16 +35,16 @@ function isJunction(x, y) {
     let adjacentPaths = 0; // Counter for adjacent paths
 
     // Check adjacent positions for paths
-    if (isWithinGrid(x-1, y) && isNotWall(x-1, y)) {
+    if (isValidMove(x-1, y)) {
         adjacentPaths++;
     }
-    if (isWithinGrid(x+1, y) && isNotWall(x+1, y)) {
+    if (isValidMove(x+1, y)) {
         adjacentPaths++;
     }
-    if (isWithinGrid(x, y-1) && isNotWall(x, y-1)) {
+    if (isValidMove(x, y-1)) {
         adjacentPaths++;
     }
-    if (isWithinGrid(x, y+1) && isNotWall(x, y+1)) {
+    if (isValidMove(x, y+1)) {
         adjacentPaths++;
     }
 
@@ -57,14 +57,14 @@ function isJunction(x, y) {
     if (adjacentPaths == 2) {
         let straight = false;
 
-        if (isWithinGrid(x-1, y) && isNotWall(x-1, y)) {
-            if (isWithinGrid(x+1, y) && isNotWall(x+1, y)) {
+        if (isValidMove(x-1, y)) {
+            if (isValidMove(x+1, y)) {
                 straight = true;
             }
         }
 
-        if (isWithinGrid(x, y-1) && isNotWall(x, y-1)) {
-            if (isWithinGrid(x, y+1) && isNotWall(x, y+1)) {
+        if (isValidMove(x, y-1)) {
+            if (isValidMove(x, y+1)) {
                 straight = true;
             }
         }
@@ -77,16 +77,6 @@ function isJunction(x, y) {
     }
 }
 
-// Function to check if a move is valid (not a wall)
-function isNotWall(x, y) {
-    return grid[x][y] !== 1;
-}
-
-// Function to check if a position is valid (within the grid boundaries)
-function isWithinGrid(x, y) {
-    return x >= 0 && x < grid.length && y >= 0 && y < grid[x].length;
-}
-
 // Function to add walls to the grid
 function addWallSection(x1, x2, y1, y2, mirror) {
     for (let i = x1; i <= x2; i++) {
@@ -97,6 +87,21 @@ function addWallSection(x1, x2, y1, y2, mirror) {
             }
         }
     }
+}
+
+function isValidMove(x, y) {
+    // Check array bounds
+    if (x < 0 || y < 0 || x >= grid.length || y >= grid[0].length) {
+        return false;
+    }
+
+    // Check if the position is a wall
+    if (grid[x][y] === 1) {
+        return false;
+    }
+
+    // If it's not out of bounds or a wall, it's a valid move
+    return true;
 }
 
 // Function to add the layout of walls to the grid
@@ -133,4 +138,7 @@ function addWalls() {
     addWallSection(2, 11, 27, 28, true);
     addWallSection(10, 17, 24, 25, false);
     addWallSection(13, 14, 26, 28, true);
+
+    // grid[27][14] = 0;
+    // grid[0][14] = 0;
 }

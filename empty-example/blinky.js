@@ -13,6 +13,13 @@ let blinkyImgUp;
 let blinkyImgDown;
 let blinkyImgLeft;
 let blinkyImgRight;
+
+function blinkyLoadImages() {
+    blinkyImgDown = loadImage('pictures/ghosts/blinky/blinky_down.png');
+    blinkyImgUp = loadImage('pictures/ghosts/blinky/blinky_up.png');
+    blinkyImgLeft = loadImage('pictures/ghosts/blinky/blinky_left.png');
+    blinkyImgRight = loadImage('pictures/ghosts/blinky/blinky_right.png');
+}
   
 function blinkyFollowPath(path) {
     if (path && path.length > 1) {

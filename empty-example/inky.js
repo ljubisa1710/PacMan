@@ -10,19 +10,16 @@ let inky = {
 let inkyPath;
 let inkyTarget;
 
-function isValidMove(x, y) {
-    // Check array bounds
-    if (x < 0 || y < 0 || x >= grid.length || y >= grid[0].length) {
-        return false;
-    }
+let inkyImgUp;
+let inkyImgDown;
+let inkyImgLeft;
+let inkyImgRight;
 
-    // Check if the position is a wall
-    if (grid[x][y] === 1) {
-        return false;
-    }
-
-    // If it's not out of bounds or a wall, it's a valid move
-    return true;
+function inkyLoadImages() {
+    inkyImgDown = loadImage('pictures/ghosts/inky/inky_down.png');
+    inkyImgUp = loadImage('pictures/ghosts/inky/inky_up.png');
+    inkyImgLeft = loadImage('pictures/ghosts/inky/inky_left.png');
+    inkyImgRight = loadImage('pictures/ghosts/inky/inky_right.png');
 }
 
 
@@ -141,15 +138,29 @@ function inkyFollowPath(path) {
   
 // Function to draw inky
 function drawInky() {
-    fill(0, 0, 255); // Blue for inky
-    circle(inky.x * 20 + 10, inky.y * 20 + 10, 18);
+    switch(inky.dir) {
+        case 'LEFT':
+            image(inkyImgLeft, inky.x * 20, inky.y * 20, 20, 20);
+            break;
+        case 'RIGHT':
+            image(inkyImgRight, inky.x * 20, inky.y * 20, 20, 20);
+            break;
+        case 'UP':
+            image(inkyImgUp, inky.x * 20, inky.y * 20, 20, 20);
+            break;
+        case 'DOWN':
+            image(inkyImgDown, inky.x * 20, inky.y * 20, 20, 20);
+            break;
+        default:
+            image(inkyImgDown, inky.x * 20, inky.y * 20, 20, 20);
+    }
 }
 
 // Function to draw a path using the A* algorithm
 function inkyDrawPath(path) {
     if (path) {
         for (let node of path) {
-            fill(0, 0, 255); // Blue color for the path
+            fill(0,255,255); // Blue color for the path
             rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
         }
     }

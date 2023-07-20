@@ -10,6 +10,18 @@ let clyde = {
 let clydePath;
 let clydeTarget;
 let clydeRunTarget = {x: 1, y: 29};
+
+let clydeImgUp;
+let clydeImgDown;
+let clydeImgLeft;
+let clydeImgRight;
+
+function clydeLoadImages() {
+    clydeImgDown = loadImage('pictures/ghosts/clyde/clyde_down.png');
+    clydeImgUp = loadImage('pictures/ghosts/clyde/clyde_up.png');
+    clydeImgLeft = loadImage('pictures/ghosts/clyde/clyde_left.png');
+    clydeImgRight = loadImage('pictures/ghosts/clyde/clyde_right.png');
+}
   
 function clydeFollowPath(path) {
     if (path && path.length > 1) {
@@ -89,8 +101,22 @@ function calculateClydeTarget() {
   
 // Function to draw clyde
 function drawClyde() {
-    fill(255, 165, 0); // orange for clyde
-    circle(clyde.x * 20 + 10, clyde.y * 20 + 10, 18);
+    switch(clyde.dir) {
+        case 'LEFT':
+            image(clydeImgLeft, clyde.x * 20, clyde.y * 20, 20, 20);
+            break;
+        case 'RIGHT':
+            image(clydeImgRight, clyde.x * 20, clyde.y * 20, 20, 20);
+            break;
+        case 'UP':
+            image(clydeImgUp, clyde.x * 20, clyde.y * 20, 20, 20);
+            break;
+        case 'DOWN':
+            image(clydeImgDown, clyde.x * 20, clyde.y * 20, 20, 20);
+            break;
+        default:
+            image(clydeImgDown, clyde.x * 20, clyde.y * 20, 20, 20);
+    }
 }
 
 // Function to draw a path using the A* algorithm

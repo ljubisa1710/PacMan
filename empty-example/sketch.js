@@ -89,10 +89,11 @@ function drawGhostPaths() {
 
 function preload() {
   // Load the images
-  blinkyImgDown = loadImage('pictures/ghosts/blinky/blinky_down.png');
-  blinkyImgUp = loadImage('pictures/ghosts/blinky/blinky_up.png');
-  blinkyImgLeft = loadImage('pictures/ghosts/blinky/blinky_left.png');
-  blinkyImgRight = loadImage('pictures/ghosts/blinky/blinky_right.png');
+  pacmanLoadImages();
+  blinkyLoadImages();
+  clydeLoadImages();
+  inkyLoadImages();
+  pinkyLoadImages();
 }
 
 // p5.js setup function that's called once at the beginning
