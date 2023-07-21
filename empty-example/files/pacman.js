@@ -29,6 +29,32 @@ function pacmanLoadImages() {
     pacmanImages[2] = loadImage('pictures/pacman/moving/pacman_3.png');
 }
 
+function pacmanEatPellet() {
+    // Iterate through the pellets array
+    for (let i = 0; i < pellets.length; i++) {
+        // Check if Pacman's coordinates match the current pellet's coordinates
+        if (pellets[i].x === pacman.x && pellets[i].y === pacman.y) {
+            // If they match, remove this pellet from the array
+            pellets.splice(i, 1);
+            // Since we found a match and removed a pellet, we can break the loop after increasing the score
+            score++;
+            break;
+        }
+    }
+
+    // Iterate through the power pellets array
+    for (let i = 0; i < powerPellets.length; i++) {
+        // Check if Pacman's coordinates match the current pellet's coordinates
+        if (powerPellets[i].x === pacman.x && powerPellets[i].y === pacman.y) {
+            // If they match, remove this pellet from the array
+            powerPellets.splice(i, 1);
+            // Since we found a match and removed a pellet, we can break the loop after increasing the score
+            score = score + 10;
+            break;
+        }
+    }
+}
+
 function isPacmanMoving() {
     let newX = pacman.x;
     let newY = pacman.y;
@@ -105,12 +131,13 @@ function handleMovement() {
 
         // Check if the new position is a wall
         if (isValidMove(newX, newY)) {
-            if (playSound) {
-                pacmanPlaySound();
-            }
             pacman.x = newX;
             pacman.y = newY;
             imageTracker++;
+            if (playSound) {
+                pacmanPlaySound();
+            }
+            pacmanEatPellet();
         }
 
         if (imageTracker == 3) {
@@ -188,6 +215,10 @@ function pacmanFollowPath(path) {
         pacman.x = newX;
         pacman.y = newY;
         imageTracker++;
+        if (playSound) {
+            pacmanPlaySound();
+        }
+        pacmanEatPellet();
     }
 
     if (imageTracker == 3) {

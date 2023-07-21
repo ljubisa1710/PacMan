@@ -147,10 +147,10 @@ function getTiles() {
     // Get the tile width and height
     const tileWidth = width / grid.length;
     const tileHeight = height / grid[0].length;
-  
+
     // Calculate the clicked tile's X and Y indices
     const tileX = Math.floor(mouseX / tileWidth);
     const tileY = Math.floor(mouseY / tileHeight);
-  
+
     return [tileX, tileY];
-  }
+}

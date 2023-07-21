@@ -7,6 +7,8 @@ let path = []; // Array to store current path
 let allowedUpdatePositions = []; // Array to store allowed update positions for ghosts
 let showPath = false;
 let playSound = false;
+let score = 0;
+
 
 function initializeGhosts() {
   blinkyPath = aStar(blinky, pacman); // Recalculate path with A* algorithm
@@ -96,6 +98,8 @@ function preload() {
   clydeLoadImages();
   inkyLoadImages();
   pinkyLoadImages();
+
+  pelletLoadImages();
 }
 
 function resetGhosts() {
@@ -123,6 +127,7 @@ function mouseClicked() {
   let tiles = getTiles();
   let tileX = tiles[0];
   let tileY = tiles[1];
+  console.log(tileX, tileY);
   
   if (isValidMove(tileX, tileY)) {
     pacmanPathFind(tileX, tileY);
@@ -136,6 +141,7 @@ function setup() {
   
   addWalls(); // Add walls to grid
   findJunctions();
+  addPellets(grid);
 
   startTime = millis();
   initializeGhosts();
@@ -169,6 +175,9 @@ function draw() {
     handleMovement();
   }
 
+  // Update the displayed score.
+  document.getElementById('score').textContent = `Score: ${score}`;
+
   // Check if 5 seconds have passed
   if (millis() - startTime >= 5000) {
     updateGhostsEveryJunction();
@@ -177,8 +186,11 @@ function draw() {
   if (showPath) {
     drawGhostPaths();
   }
+
   drawEntities();
   handleKeys(); 
+
+  drawPellets();
 
   frameCount++; // Increase frame count
 }
