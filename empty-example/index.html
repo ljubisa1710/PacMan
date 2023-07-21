@@ -24,14 +24,26 @@
       font-size: 50px;
       color: rgb(255, 255, 255);
       position: relative;
-      top: -82px;
+      top: -29px;
       right: 190px;
     }
 
     #showPath {
       position: relative;
-      top: -77px;
+      top: -36px;
       left: 325px;
+    }
+
+    #resetGhosts {
+      position: relative;
+      top: -32px;
+      left: 332px;
+    }
+
+    #playSound {
+      position: relative;
+      top: -28px;
+      left: 327px;
     }
 
     canvas {
@@ -43,20 +55,22 @@
 
   <script src="../p5.min.js"></script>
   <script src="../addons/p5.sound.js"></script>
-  <script src="sketch.js"></script>
-  <script src="a_star.js"></script>
-  <script src="blinky.js"></script>
-  <script src="pinky.js"></script>
-  <script src="inky.js"></script>
-  <script src="clyde.js"></script>
-  <script src="pacman.js"></script>
-  <script src="utility.js"></script>
+  <script src="./files/sketch.js"></script>
+  <script src="./files/a_star.js"></script>
+  <script src="./files/blinky.js"></script>
+  <script src="./files/pinky.js"></script>
+  <script src="./files/inky.js"></script>
+  <script src="./files/clyde.js"></script>
+  <script src="./files/pacman.js"></script>
+  <script src="./files/utility.js"></script>
 
 </head>
 
 <body>
   <div id="title">Pac-Man</div>
   <button id="showPath">Show Path</button>
+  <button id="resetGhosts">Reset Ghosts</button>
+  <button id="playSound">Play Sound</button>
 </body>
 
 </html>
