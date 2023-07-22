@@ -31,34 +31,63 @@ function clydeLoadImages() {
     clydeImgRight = loadImage('pictures/ghosts/clyde/clyde_right.png');
 }
   
-// Function for clyde to follow a given path
-function clydeFollowPath(path) {
-    let newX = clyde.x;
-    let newY = clyde.y;
-    let nextNode = path ? path[path.length - 2] : null; // Take the last node in the path
+function moveClydeRandomly() {
+    let newX, newY, randomDirection;
+    let directions = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
 
-    // If there's a path to follow, update direction accordingly
-    if (nextNode) {
-        let dx = nextNode.x - newX;
-        let dy = nextNode.y - newY;
-        let proposedDir;
+    do {
+        randomDirection = directions[Math.floor(Math.random() * directions.length)];
+        newX = clyde.x;
+        newY = clyde.y;
 
-        if (Math.abs(dx) > Math.abs(dy)) {
-            proposedDir = dx > 0 ? 'RIGHT' : 'LEFT';
-        } else {
-            proposedDir = dy > 0 ? 'DOWN' : 'UP';
+        switch (randomDirection) {
+            case 'LEFT':
+                newX--;
+                break;
+            case 'RIGHT':
+                newX++;
+                break;
+            case 'UP':
+                newY--;
+                break;
+            case 'DOWN':
+                newY++;
+                break;
         }
+    } while (!isValidMove(newX, newY) || (newX === clyde.prevX && newY === clyde.prevY)); 
 
-        // Ensure the proposed direction is not a 180-degree turn
-        if (!((clyde.dir === 'LEFT' && proposedDir === 'RIGHT') ||
-              (clyde.dir === 'RIGHT' && proposedDir === 'LEFT') ||
-              (clyde.dir === 'UP' && proposedDir === 'DOWN') ||
-              (clyde.dir === 'DOWN' && proposedDir === 'UP'))) {
-            clyde.dir = proposedDir;
-        }
+    // Ensure the random direction is not a 180-degree turn
+    if (!((clyde.dir === 'LEFT' && randomDirection === 'RIGHT') ||
+          (clyde.dir === 'RIGHT' && randomDirection === 'LEFT') ||
+          (clyde.dir === 'UP' && randomDirection === 'DOWN') ||
+          (clyde.dir === 'DOWN' && randomDirection === 'UP'))) {
+        clyde.dir = randomDirection;
     }
 
-    // Based on direction, set the new position
+    return {newX, newY};
+}
+
+function moveClydeAlongPath(nextNode) {
+    let newX = clyde.x;
+    let newY = clyde.y;
+    let dx = nextNode.x - newX;
+    let dy = nextNode.y - newY;
+    let proposedDir;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+        proposedDir = dx > 0 ? 'RIGHT' : 'LEFT';
+    } else {
+        proposedDir = dy > 0 ? 'DOWN' : 'UP';
+    }
+
+    // Ensure the proposed direction is not a 180-degree turn
+    if (!((clyde.dir === 'LEFT' && proposedDir === 'RIGHT') ||
+          (clyde.dir === 'RIGHT' && proposedDir === 'LEFT') ||
+          (clyde.dir === 'UP' && proposedDir === 'DOWN') ||
+          (clyde.dir === 'DOWN' && proposedDir === 'UP'))) {
+        clyde.dir = proposedDir;
+    }
+
     switch (clyde.dir) {
         case 'LEFT':
             newX--;
@@ -72,6 +101,24 @@ function clydeFollowPath(path) {
         case 'DOWN':
             newY++;
             break;
+    }
+
+    return {newX, newY};
+}
+
+function clydeFollowPath(path) {
+    let newX, newY;
+    let nextNode = path ? path[path.length - 2] : null;
+
+    // If path length is 1, move randomly
+    if (path && path.length === 1) {
+        let randomMove = moveClydeRandomly();
+        newX = randomMove.newX;
+        newY = randomMove.newY;
+    } else if (nextNode) { // If there's a path to follow, update direction accordingly
+        let pathMove = moveClydeAlongPath(nextNode);
+        newX = pathMove.newX;
+        newY = pathMove.newY;
     }
 
     // Check for the wraparound conditions

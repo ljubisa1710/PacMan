@@ -59,34 +59,63 @@ function calculatePinkyTarget() {
     return target;
 }
 
-// Function for Pinky to follow a given path
-function pinkyFollowPath(path) {
-    let newX = pinky.x;
-    let newY = pinky.y;
-    let nextNode = path ? path[path.length - 2] : null; // Take the last node in the path
+function movePinkyRandomly() {
+    let newX, newY, randomDirection;
+    let directions = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
 
-    // If there's a path to follow, update direction accordingly
-    if (nextNode) {
-        let dx = nextNode.x - newX;
-        let dy = nextNode.y - newY;
-        let proposedDir;
+    do {
+        randomDirection = directions[Math.floor(Math.random() * directions.length)];
+        newX = pinky.x;
+        newY = pinky.y;
 
-        if (Math.abs(dx) > Math.abs(dy)) {
-            proposedDir = dx > 0 ? 'RIGHT' : 'LEFT';
-        } else {
-            proposedDir = dy > 0 ? 'DOWN' : 'UP';
+        switch (randomDirection) {
+            case 'LEFT':
+                newX--;
+                break;
+            case 'RIGHT':
+                newX++;
+                break;
+            case 'UP':
+                newY--;
+                break;
+            case 'DOWN':
+                newY++;
+                break;
         }
+    } while (!isValidMove(newX, newY) || (newX === pinky.prevX && newY === pinky.prevY)); 
 
-        // Ensure the proposed direction is not a 180-degree turn
-        if (!((pinky.dir === 'LEFT' && proposedDir === 'RIGHT') ||
-              (pinky.dir === 'RIGHT' && proposedDir === 'LEFT') ||
-              (pinky.dir === 'UP' && proposedDir === 'DOWN') ||
-              (pinky.dir === 'DOWN' && proposedDir === 'UP'))) {
-            pinky.dir = proposedDir;
-        }
+    // Ensure the random direction is not a 180-degree turn
+    if (!((pinky.dir === 'LEFT' && randomDirection === 'RIGHT') ||
+          (pinky.dir === 'RIGHT' && randomDirection === 'LEFT') ||
+          (pinky.dir === 'UP' && randomDirection === 'DOWN') ||
+          (pinky.dir === 'DOWN' && randomDirection === 'UP'))) {
+        pinky.dir = randomDirection;
     }
 
-    // Based on direction, set the new position
+    return {newX, newY};
+}
+
+function movePinkyAlongPath(nextNode) {
+    let newX = pinky.x;
+    let newY = pinky.y;
+    let dx = nextNode.x - newX;
+    let dy = nextNode.y - newY;
+    let proposedDir;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+        proposedDir = dx > 0 ? 'RIGHT' : 'LEFT';
+    } else {
+        proposedDir = dy > 0 ? 'DOWN' : 'UP';
+    }
+
+    // Ensure the proposed direction is not a 180-degree turn
+    if (!((pinky.dir === 'LEFT' && proposedDir === 'RIGHT') ||
+          (pinky.dir === 'RIGHT' && proposedDir === 'LEFT') ||
+          (pinky.dir === 'UP' && proposedDir === 'DOWN') ||
+          (pinky.dir === 'DOWN' && proposedDir === 'UP'))) {
+        pinky.dir = proposedDir;
+    }
+
     switch (pinky.dir) {
         case 'LEFT':
             newX--;
@@ -100,6 +129,24 @@ function pinkyFollowPath(path) {
         case 'DOWN':
             newY++;
             break;
+    }
+
+    return {newX, newY};
+}
+
+function pinkyFollowPath(path) {
+    let newX, newY;
+    let nextNode = path ? path[path.length - 2] : null;
+
+    // If path length is 1, move randomly
+    if (path && path.length === 1) {
+        let randomMove = movePinkyRandomly();
+        newX = randomMove.newX;
+        newY = randomMove.newY;
+    } else if (nextNode) { // If there's a path to follow, update direction accordingly
+        let pathMove = movePinkyAlongPath(nextNode);
+        newX = pathMove.newX;
+        newY = pathMove.newY;
     }
 
     // Check for the wraparound conditions
@@ -116,11 +163,12 @@ function pinkyFollowPath(path) {
         pinky.y = newY;
     }
 
-    // If Pinky has reached the next node, remove it from the path
+    // If pinky has reached the next node, remove it from the path
     if (nextNode && pinky.x === nextNode.x && pinky.y === nextNode.y) {
         path.pop();
     }
 }
+
   
 function drawPinky() {
     switch(pinky.dir) {
