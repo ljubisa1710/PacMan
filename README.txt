@@ -1,20 +1,25 @@
 Overview
 
-This repository contains a Pac-Man game developed in JavaScript and p5.js for visualizing the game elements. The gameplay uses both traditional pathfinding algorithms, such as A* for the ghosts' movement, and more modern methods like reinforcement learning (RL) for an AI agent that controls Pac-Man. The project demonstrates how RL techniques can be used to train an AI agent to play a classic game like Pac-Man.
+This repository contains a Pac-Man game intricately developed using JavaScript and brought to life through the p5.js library, primarily for game visualization and rendering. Integrated within an HTML framework, the game is accessible via web browsers, offering a seamless gaming experience. p5.js simplifies graphics and interactivity in JavaScript, enabling the reimagining of a classic game like Pac-Man for modern web audiences. The gameplay taps into the traditional A* pathfinding algorithm for the ghosts' movement, treating players to a genuine Pac-Man ambiance.
 
 Features
 
-  2D Grid Environment
+    Web Integration with HTML
 
-  The game environment is represented as a 2D grid, where each cell can signify an open space, a wall, or game entities (Pac-Man or ghosts). Walls are drawn according to the original game layout, and the   positioning of game entities is updated every frame to reflect the current game state.
+    The game is encapsulated within a robust HTML structure, making it readily playable on web browsers. The HTML framework not only hosts the game canvas provided by p5.js but also ensures compatibility across different devices, creating a versatile gaming platform.
 
-  A* Path-finding Algorithm
+    p5.js and JavaScript Synergy
 
-  To mimic the behavior of ghosts in the original game, each ghost uses the A* path-finding algorithm to track and follow Pac-Man around the game environment. The path is recalculated at each junction point or when a specific number of frames have passed, ensuring that the ghost's movement remains dynamic and adjusts to Pac-Man's current position.
+    Central to the game's build is the p5.js library—a JavaScript library tailored for graphics and interactive applications. With p5.js, the game boasts smooth animations, quick-reacting controls, and a visually rich portrayal of the classic Pac-Man maze.
 
-  Manual and AI Controls
+    2D Grid Environment
 
-  Pac-Man can be controlled manually using keyboard inputs, allowing the game to be played traditionally. Alternatively, Pac-Man can be controlled by an AI agent that takes actions based on its current understanding of the game environment. This makes it possible to observe the RL process in action.
-Reinforcement Learning AI
+    The game arena is conceptualized as a 2D grid. Leveraging p5.js, each grid cell is rendered with precision, representing open spaces, walls, or game entities like Pac-Man or ghosts. Staying true to the original, walls are patterned as per the classic game layout, and the game entities' positioning is dynamically updated every frame, mirroring the live game state.
 
-In the advanced stages of the project, a RL AI agent is implemented to control Pac-Man's movements. This agent learns optimal gameplay strategies through trial-and-error, gradually improving its performance over time. The RL model is trained using a reward system that aligns with the game's scoring rules — positive rewards for eating pellets and fruit, and negative rewards for being caught by a ghost or making invalid moves.
+    A Path-finding Algorithm in Action*
+
+    The ghosts, keen on their pursuit, utilize the A* path-finding algorithm. Backed by the nimbleness of JavaScript, their paths are recalculated at every strategic point—be it junctions or after designated frame intervals—making ghost movement both dynamic and adaptive.
+
+    Intuitive Manual Controls
+
+    Thanks to the interactive capabilities of p5.js, coupled with the structured HTML canvas, players can manually control Pac-Man using keyboard inputs. This setup provides real-time game response, ensuring an engaging and fluid Pac-Man adventure.
