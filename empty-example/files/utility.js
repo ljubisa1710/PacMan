@@ -3,8 +3,13 @@ let runningImgUp;
 let runningImgLeft;
 let runningImgRight;
 
-let ghostsRunning = false;
-let ghostsScatter = false;
+let deadImgDown;
+let deadImgLeft;
+let deadImgUp;
+let deadImgRight;
+
+let runningTime = 10;
+let runningDuration = 1000 * runningTime;
 
 let scatterChaseSequence = [
     { mode: "SCATTER", duration: 7000 },
@@ -20,33 +25,44 @@ let scatterChaseSequence = [
 let currentModeIndex = 0;
 let modeStartTime = 0;
 
-function updateGhostsModes() {
-    let elapsedTime = millis() - modeStartTime;
-
-    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
-        // Switch to the next mode
-        currentModeIndex++;
-        
-        // Reset the timer for the next mode
-        modeStartTime = millis();
-    }
-
-    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
-        ghostsScatter = true;
-        ghostsRunning = false;
-    } 
-    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
-        ghostsScatter = false;
-        ghostsRunning = false; // Reset frightened mode when switching to chase
-    }
-    
-}
-
 function loadRunningImages() {
   runningImgDown = loadImage('pictures/ghosts/running/running_down.png');
   runningImgUp = loadImage('pictures/ghosts/running/running_up.png');
   runningImgLeft = loadImage('pictures/ghosts/running/running_left.png');
   runningImgRight = loadImage('pictures/ghosts/running/running_right.png');
+}
+
+function loadDeadImages() {
+    deadImgDown = loadImage('pictures/ghosts/dead/dead_down.png');
+    deadImgUp = loadImage('pictures/ghosts/dead/dead_up.png');
+    deadImgLeft = loadImage('pictures/ghosts/dead/dead_left.png');
+    deadImgRight = loadImage('pictures/ghosts/dead/dead_right.png');
+  }
+
+function setGhostsRunning() {
+    blinkyRunning = true;
+    pinkyRunning = true;
+    inkyRunning = true;
+    clydeRunning = true;
+
+    blinkyChangeImage();
+    pinkyChangeImage();
+    inkyChangeImage();
+    clydeChangeImage();
+}
+
+function stopGhostsRunning() {
+    blinkyRunning = false;
+    pinkyRunning = false;
+    inkyRunning = false;
+    clydeRunning = false;
+
+    ghostsEaten = 0;
+
+    blinkyChangeImage();
+    pinkyChangeImage();
+    inkyChangeImage();
+    clydeChangeImage();
 }
 
 // Function to draw the grid

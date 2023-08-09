@@ -7,7 +7,9 @@ let clyde = {
     prevY: -1
 };
 
+let clydeRunning = false;
 let clydeDead = false;
+let clydeScatter = false;
 
 let clydePath;
 let clydeTarget;
@@ -34,6 +36,25 @@ function clydeLoadImages() {
     clydeImgUp = loadImage('pictures/ghosts/clyde/clyde_up.png');
     clydeImgLeft = loadImage('pictures/ghosts/clyde/clyde_left.png');
     clydeImgRight = loadImage('pictures/ghosts/clyde/clyde_right.png');
+}
+
+function clydeChangeImage() {
+    if (clydeRunning) {
+        clydeImgDown = runningImgDown;
+        clydeImgUp = runningImgUp;
+        clydeImgLeft = runningImgLeft;
+        clydeImgRight = runningImgRight;
+    } else if (clydeDead) {
+        clydeImgDown = deadImgDown;
+        clydeImgUp = deadImgUp;
+        clydeImgLeft = deadImgLeft;
+        clydeImgRight = deadImgRight;
+    } else {
+        clydeImgDown = loadImage('pictures/ghosts/clyde/clyde_down.png');
+        clydeImgUp = loadImage('pictures/ghosts/clyde/clyde_up.png');
+        clydeImgLeft = loadImage('pictures/ghosts/clyde/clyde_left.png');
+        clydeImgRight = loadImage('pictures/ghosts/clyde/clyde_right.png');
+    }
 }
   
 function moveClydeRandomly() {
@@ -234,23 +255,69 @@ function drawClyde() {
     }
 }
 
+function updateClydeMode() {
+    let elapsedTime = millis() - modeStartTime;
+
+    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
+        // Switch to the next mode
+        currentModeIndex++;
+        
+        // Reset the timer for the next mode
+        modeStartTime = millis();
+    }
+
+    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
+        clydeScatter = true;
+        clydeRunning = false;
+    } 
+    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
+        clydeScatter = false;
+        clydeRunning = false; // Reset frightened mode when switching to chase
+    }
+}
+
+function clydeHomePath() {
+    clydePath = aStar(clyde, {x: 16, y: 13})
+}
+
+function clydeScatterPath() {
+    clydePath = aStar(clyde, clydeScatterTarget);
+}
+
+function clydeChasePath() {
+    clydePath = aStar(clyde, pacman);
+}
 
 function updateClydePath() {
-    if (ghostsRunning) {
+    if (clydeDead) {
+        clydeHomePath();
+        if (clyde.x == 16 && clyde.y == 13) {
+            clydeDead = false;
+            clydeRunning = false;
+            clydeChasePath();
+            clydeChangeImage();
+        }
+    }
+    else if (clydeRunning) {
         moveClydeRandomly();
     } 
-    else if (ghostsScatter) {
-        clydePath = aStar(clyde, clydeScatterTarget); // Target the scatter tile when in scatter mode
+    else if (clydeScatter) {
+        clydeScatterPath(); // Target the scatter tile when in scatter mode
     } 
     else {
-        clydeTarget = calculateClydeTarget();
-        clydePath = aStar(clyde, clydeTarget); // Target Pac-Man when in chase mode
+        clydeChasePath(); // Target Pac-Man when in chase mode
     }
 }
 
 function clydeFrameUpdate() {
-    if (frameCount % ghostSpeed === 0) {
-        clydeFollowPath(clydePath); 
+    if (clydeRunning) {
+        if (frameCount % ghostRunningSpeed === 0) {
+            clydeFollowPath(clydePath); 
+        }
+    } else {
+        if (frameCount % ghostSpeed === 0) {
+            clydeFollowPath(clydePath); 
+        }
     }
 }
 

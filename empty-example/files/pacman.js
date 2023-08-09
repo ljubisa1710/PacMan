@@ -11,6 +11,7 @@ let pacmanPath;
 
 let isPacmanDead = false;
 let powerTime = false;
+let ghostsEaten = 0;
 
 let pacmanImages = [];
 let imageTracker = 0;
@@ -67,6 +68,8 @@ function pacmanEatPellet() {
             // Since we found a match and removed a pellet, we can break the loop after increasing the score
             score = score + 50;
             powerTime = true;
+            setGhostsRunning();
+            setTimeout(stopGhostsRunning, runningDuration);
             break;
         }
     }
@@ -246,7 +249,7 @@ function pacmanDrawPath(path) {
     }
 }
 
-function checkCollisionWithGhosts() {
+function pacmanStandardCollision() {
     if (pacman.x == blinky.x && pacman.y == blinky.y && blinkyRunning == false && blinkyDead == false) {
         num_lives--; 
         isPacmanDead = true;
@@ -260,6 +263,43 @@ function checkCollisionWithGhosts() {
         num_lives--; 
         isPacmanDead = true; 
     }
+}
+
+function pacmanEatGhosts() {
+    if (pacman.x == blinky.x && pacman.y == blinky.y && blinkyRunning == true && blinkyDead == false) {
+        ghostsEaten++;
+        score += 200 ^ ghostsEaten;
+        blinkyRunning = false;
+        blinkyDead = true;
+        blinkyChangeImage();
+        blinkyHomePath();
+    } else if (pacman.x == pinky.x && pacman.y == pinky.y && pinkyRunning == true && pinkyDead == false) {
+        ghostsEaten++;
+        score += 200 ^ ghostsEaten;
+        pinkyRunning = false;
+        pinkyDead = true;
+        pinkyChangeImage();
+        pinkyHomePath();
+    } else if (pacman.x == inky.x && pacman.y == inky.y && inkyRunning == true && inkyDead == false) {
+        ghostsEaten++;
+        score += 200 ^ ghostsEaten;
+        inkyRunning = false;
+        inkyDead = true;
+        inkyChangeImage();
+        inkyHomePath();
+    } else if (pacman.x == clyde.x && pacman.y == clyde.y && clydeRunning == true && clydeDead == false) {
+        ghostsEaten++;
+        score += 200 ^ ghostsEaten;
+        clydeRunning = false;
+        clydeDead = true;
+        clydeChangeImage();
+        clydeHomePath();
+    }
+}
+
+function pacmanCollision() {
+    pacmanStandardCollision();
+    pacmanEatGhosts();
 }
 
 function pacmanFrameUpdate() {

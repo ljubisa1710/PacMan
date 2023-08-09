@@ -6,7 +6,10 @@ let blinky = {
     prevX: -1,
     prevY: -1
 };
+
+let blinkyRunning = false;
 let blinkyDead = false;
+let blinkyScatter = false;
 
 let blinkyPath;
 let blinkyScatterTarget = {x: 1, y: 1};
@@ -32,6 +35,25 @@ function blinkyLoadImages() {
     blinkyImgUp = loadImage('pictures/ghosts/blinky/blinky_up.png');
     blinkyImgLeft = loadImage('pictures/ghosts/blinky/blinky_left.png');
     blinkyImgRight = loadImage('pictures/ghosts/blinky/blinky_right.png');
+}
+
+function blinkyChangeImage() {
+    if (blinkyRunning) {
+        blinkyImgDown = runningImgDown;
+        blinkyImgUp = runningImgUp;
+        blinkyImgLeft = runningImgLeft;
+        blinkyImgRight = runningImgRight;
+    } else if (blinkyDead) {
+        blinkyImgDown = deadImgDown;
+        blinkyImgUp = deadImgUp;
+        blinkyImgLeft = deadImgLeft;
+        blinkyImgRight = deadImgRight;
+    } else {
+        blinkyImgDown = loadImage('pictures/ghosts/blinky/blinky_down.png');
+        blinkyImgUp = loadImage('pictures/ghosts/blinky/blinky_up.png');
+        blinkyImgLeft = loadImage('pictures/ghosts/blinky/blinky_left.png');
+        blinkyImgRight = loadImage('pictures/ghosts/blinky/blinky_right.png');
+    }
 }
   
 function moveBlinkyRandomly() {
@@ -219,21 +241,48 @@ function updateBlinkyMode() {
     }
 }
 
+function blinkyHomePath() {
+    blinkyPath = aStar(blinky, {x: 11, y: 13})
+}
+
+function blinkyScatterPath() {
+    blinkyPath = aStar(blinky, blinkyScatterTarget);
+}
+
+function blinkyChasePath() {
+    blinkyPath = aStar(blinky, pacman);
+}
+
 function updateBlinkyPath() {
-    if (ghostsRunning) {
+    if (blinkyDead) {
+        blinkyHomePath();
+        if (blinky.x == 11 && blinky.y == 13) {
+            blinkyDead = false;
+            blinkyRunning = false;
+            blinkyChasePath();
+            blinkyChangeImage();
+        }
+    }
+    else if (blinkyRunning) {
         moveBlinkyRandomly();
     } 
-    else if (ghostsScatter) {
-        blinkyPath = aStar(blinky, blinkyScatterTarget); // Target the scatter tile when in scatter mode
+    else if (blinkyScatter) {
+        blinkyScatterPath(); // Target the scatter tile when in scatter mode
     } 
     else {
-        blinkyPath = aStar(blinky, pacman); // Target Pac-Man when in chase mode
+        blinkyChasePath(); // Target Pac-Man when in chase mode
     }
 }
 
 function blinkyFrameUpdate() {
-    if (frameCount % ghostSpeed === 0) {
-        blinkyFollowPath(blinkyPath); 
+    if (blinkyRunning) {
+        if (frameCount % ghostRunningSpeed === 0) {
+            blinkyFollowPath(blinkyPath); 
+        }
+    } else {
+        if (frameCount % ghostSpeed === 0) {
+            blinkyFollowPath(blinkyPath); 
+        }
     }
 }
   

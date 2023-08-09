@@ -7,7 +7,9 @@ let inky = {
     prevY: 29
 };
 
+let inkyRunning = false;
 let inkyDead = false;
+let inkyScatter = false;
 
 let inkyPath;
 let inkyTarget;
@@ -34,6 +36,25 @@ function inkyLoadImages() {
     inkyImgUp = loadImage('pictures/ghosts/inky/inky_up.png');
     inkyImgLeft = loadImage('pictures/ghosts/inky/inky_left.png');
     inkyImgRight = loadImage('pictures/ghosts/inky/inky_right.png');
+}
+
+function inkyChangeImage() {
+    if (inkyRunning) {
+        inkyImgDown = runningImgDown;
+        inkyImgUp = runningImgUp;
+        inkyImgLeft = runningImgLeft;
+        inkyImgRight = runningImgRight;
+    } else if (inkyDead) {
+        inkyImgDown = deadImgDown;
+        inkyImgUp = deadImgUp;
+        inkyImgLeft = deadImgLeft;
+        inkyImgRight = deadImgRight;
+    } else {
+        inkyImgDown = loadImage('pictures/ghosts/inky/inky_down.png');
+        inkyImgUp = loadImage('pictures/ghosts/inky/inky_up.png');
+        inkyImgLeft = loadImage('pictures/ghosts/inky/inky_left.png');
+        inkyImgRight = loadImage('pictures/ghosts/inky/inky_right.png');
+    }
 }
 
 
@@ -261,22 +282,48 @@ function updateInkyMode() {
     }
 }
 
+function inkyHomePath() {
+    inkyPath = aStar(inky, {x: 11, y: 15})
+}
+
+function inkyScatterPath() {
+    inkyPath = aStar(inky, inkyScatterTarget);
+}
+
+function inkyChasePath() {
+    inkyPath = aStar(inky, pacman);
+}
+
 function updateInkyPath() {
-    if (ghostsRunning) {
+    if (inkyDead) {
+        inkyHomePath();
+        if (inky.x == 11 && inky.y == 15) {
+            inkyDead = false;
+            inkyRunning = false;
+            inkyChasePath();
+            inkyChangeImage();
+        }
+    }
+    else if (inkyRunning) {
         moveInkyRandomly();
     } 
-    else if (ghostsScatter) {
-        inkyPath = aStar(inky, inkyScatterTarget); // Target the scatter tile when in scatter mode
+    else if (inkyScatter) {
+        inkyScatterPath(); // Target the scatter tile when in scatter mode
     } 
     else {
-        inkyTarget = calculateInkyTarget();
-        inkyPath = aStar(inky, inkyTarget); // Target Pac-Man when in chase mode
+        inkyChasePath(); // Target Pac-Man when in chase mode
     }
 }
 
 function inkyFrameUpdate() {
-    if (frameCount % ghostSpeed === 0) {
-        inkyFollowPath(inkyPath); 
+    if (inkyRunning) {
+        if (frameCount % ghostRunningSpeed === 0) {
+            inkyFollowPath(inkyPath); 
+        }
+    } else {
+        if (frameCount % ghostSpeed === 0) {
+            inkyFollowPath(inkyPath); 
+        }
     }
 }
    

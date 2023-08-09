@@ -52,7 +52,9 @@ function preload() {
   clydeLoadImages();
   inkyLoadImages();
   pinkyLoadImages();
+
   loadRunningImages();
+  loadDeadImages();
 
   pelletLoadImages();
 }
@@ -76,6 +78,13 @@ function updateGhostsPaths() {
   updateClydePath();
 }
 
+function updateGhostsModes() {
+  if (!blinkyRunning && !blinkyDead) updateBlinkyMode();
+  if (!pinkyRunning && !pinkyDead) updatePinkyMode();
+  if (!inkyRunning && !inkyDead) updateInkyMode();
+  if (!clydeRunning && !clydeDead) updateClydeMode();
+}
+
 function mouseClicked() {
   let tiles = getTiles();
   let tileX = tiles[0];
@@ -96,6 +105,7 @@ function resetGame() {
   startTime = millis();
   currentTime = millis();
 
+  ghostsEaten = 0;
   score = 0;
   num_lives = 3;
 }
@@ -202,7 +212,7 @@ function draw() {
   drawPellets();
   drawEntities();
   handleKeys(); 
-  checkCollisionWithGhosts();
+  pacmanCollision();
 
   frameCount++; // Increase frame count
 }

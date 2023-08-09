@@ -7,7 +7,9 @@ let pinky = {
     prevY: -1
 };
 
+let pinkyRunning = false;
 let pinkyDead = false;
+let pinkyScatter = false;
 
 let pinkyTarget;
 let pinkyPath;
@@ -34,6 +36,25 @@ function pinkyLoadImages() {
     pinkyImgUp = loadImage('pictures/ghosts/pinky/pinky_up.png');
     pinkyImgLeft = loadImage('pictures/ghosts/pinky/pinky_left.png');
     pinkyImgRight = loadImage('pictures/ghosts/pinky/pinky_right.png');
+}
+
+function pinkyChangeImage() {
+    if (pinkyRunning) {
+        pinkyImgDown = runningImgDown;
+        pinkyImgUp = runningImgUp;
+        pinkyImgLeft = runningImgLeft;
+        pinkyImgRight = runningImgRight;
+    } else if (pinkyDead) {
+        pinkyImgDown = deadImgDown;
+        pinkyImgUp = deadImgUp;
+        pinkyImgLeft = deadImgLeft;
+        pinkyImgRight = deadImgRight;
+    } else {
+        pinkyImgDown = loadImage('pictures/ghosts/pinky/pinky_down.png');
+        pinkyImgUp = loadImage('pictures/ghosts/pinky/pinky_up.png');
+        pinkyImgLeft = loadImage('pictures/ghosts/pinky/pinky_left.png');
+        pinkyImgRight = loadImage('pictures/ghosts/pinky/pinky_right.png');
+    }
 }
 
 // Function to calculate Pinky's target based on Pac-Man's direction
@@ -249,22 +270,69 @@ function drawPinky() {
     }
 }
 
+function updatePinkyMode() {
+    let elapsedTime = millis() - modeStartTime;
+
+    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
+        // Switch to the next mode
+        currentModeIndex++;
+        
+        // Reset the timer for the next mode
+        modeStartTime = millis();
+    }
+
+    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
+        pinkyScatter = true;
+        pinkyRunning = false;
+    } 
+    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
+        pinkyScatter = false;
+        pinkyRunning = false; // Reset frightened mode when switching to chase
+    }
+}
+
+function pinkyHomePath() {
+    pinkyPath = aStar(pinky, {x: 16, y: 15})
+}
+
+function pinkyScatterPath() {
+    pinkyPath = aStar(pinky, pinkyScatterTarget);
+}
+
+function pinkyChasePath() {
+    pinkyPath = aStar(pinky, pacman);
+}
+
 function updatePinkyPath() {
-    if (ghostsRunning) {
+    if (pinkyDead) {
+        pinkyHomePath();
+        if (pinky.x == 16 && pinky.y == 15) {
+            pinkyDead = false;
+            pinkyRunning = false;
+            pinkyChasePath();
+            pinkyChangeImage();
+        }
+    }
+    else if (pinkyRunning) {
         movePinkyRandomly();
     } 
-    else if (ghostsScatter) {
-        pinkyPath = aStar(pinky, pinkyScatterTarget); // Target the scatter tile when in scatter mode
+    else if (pinkyScatter) {
+        pinkyScatterPath(); // Target the scatter tile when in scatter mode
     } 
     else {
-        pinkyTarget = calculatePinkyTarget();
-        pinkyPath = aStar(pinky, pinkyTarget); // Target Pac-Man when in chase mode
+        pinkyChasePath(); // Target Pac-Man when in chase mode
     }
 }
 
 function pinkyFrameUpdate() {
-    if (frameCount % ghostSpeed === 0) {
-        pinkyFollowPath(pinkyPath); 
+    if (pinkyRunning) {
+        if (frameCount % ghostRunningSpeed === 0) {
+            pinkyFollowPath(pinkyPath); 
+        }
+    } else {
+        if (frameCount % ghostSpeed === 0) {
+            pinkyFollowPath(pinkyPath); 
+        }
     }
 }
 
