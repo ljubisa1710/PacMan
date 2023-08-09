@@ -7,9 +7,7 @@ let clyde = {
     prevY: -1
 };
 
-let clydeRunning = false;
 let clydeDead = false;
-let clydeScatter = false;
 
 let clydePath;
 let clydeTarget;
@@ -236,32 +234,12 @@ function drawClyde() {
     }
 }
 
-function updateClydeMode() {
-    let elapsedTime = millis() - modeStartTime;
-
-    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
-        // Switch to the next mode
-        currentModeIndex++;
-        
-        // Reset the timer for the next mode
-        modeStartTime = millis();
-    }
-
-    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
-        clydeScatter = true;
-        clydeRunning = false;
-    } 
-    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
-        clydeScatter = false;
-        clydeRunning = false; // Reset frightened mode when switching to chase
-    }
-}
 
 function updateClydePath() {
-    if (clydeRunning) {
+    if (ghostsRunning) {
         moveClydeRandomly();
     } 
-    else if (clydeScatter) {
+    else if (ghostsScatter) {
         clydePath = aStar(clyde, clydeScatterTarget); // Target the scatter tile when in scatter mode
     } 
     else {

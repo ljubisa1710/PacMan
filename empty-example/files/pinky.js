@@ -7,9 +7,7 @@ let pinky = {
     prevY: -1
 };
 
-let pinkyRunning = false;
 let pinkyDead = false;
-let pinkyScatter = false;
 
 let pinkyTarget;
 let pinkyPath;
@@ -251,32 +249,11 @@ function drawPinky() {
     }
 }
 
-function updatePinkyMode() {
-    let elapsedTime = millis() - modeStartTime;
-
-    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
-        // Switch to the next mode
-        currentModeIndex++;
-        
-        // Reset the timer for the next mode
-        modeStartTime = millis();
-    }
-
-    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
-        pinkyScatter = true;
-        pinkyRunning = false;
-    } 
-    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
-        pinkyScatter = false;
-        pinkyRunning = false; // Reset frightened mode when switching to chase
-    }
-}
-
 function updatePinkyPath() {
-    if (pinkyRunning) {
+    if (ghostsRunning) {
         movePinkyRandomly();
     } 
-    else if (pinkyScatter) {
+    else if (ghostsScatter) {
         pinkyPath = aStar(pinky, pinkyScatterTarget); // Target the scatter tile when in scatter mode
     } 
     else {

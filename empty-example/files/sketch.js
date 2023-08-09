@@ -76,11 +76,6 @@ function updateGhostsPaths() {
   updateClydePath();
 }
 
-function updateGhostsModes() {
-  updateBlinkyMode();
-  updatePinkyMode();
-}
-
 function mouseClicked() {
   let tiles = getTiles();
   let tileX = tiles[0];
@@ -206,8 +201,8 @@ function draw() {
 
   drawPellets();
   drawEntities();
-  pacmanDeath();
   handleKeys(); 
+  checkCollisionWithGhosts();
 
   frameCount++; // Increase frame count
 }

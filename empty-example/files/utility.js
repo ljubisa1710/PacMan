@@ -3,6 +3,9 @@ let runningImgUp;
 let runningImgLeft;
 let runningImgRight;
 
+let ghostsRunning = false;
+let ghostsScatter = false;
+
 let scatterChaseSequence = [
     { mode: "SCATTER", duration: 7000 },
     { mode: "CHASE", duration: 20000 },
@@ -16,6 +19,28 @@ let scatterChaseSequence = [
 
 let currentModeIndex = 0;
 let modeStartTime = 0;
+
+function updateGhostsModes() {
+    let elapsedTime = millis() - modeStartTime;
+
+    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
+        // Switch to the next mode
+        currentModeIndex++;
+        
+        // Reset the timer for the next mode
+        modeStartTime = millis();
+    }
+
+    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
+        ghostsScatter = true;
+        ghostsRunning = false;
+    } 
+    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
+        ghostsScatter = false;
+        ghostsRunning = false; // Reset frightened mode when switching to chase
+    }
+    
+}
 
 function loadRunningImages() {
   runningImgDown = loadImage('pictures/ghosts/running/running_down.png');

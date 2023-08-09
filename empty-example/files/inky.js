@@ -7,9 +7,7 @@ let inky = {
     prevY: 29
 };
 
-let inkyRunning = false;
 let inkyDead = false;
-let inkyScatter = false;
 
 let inkyPath;
 let inkyTarget;
@@ -264,10 +262,10 @@ function updateInkyMode() {
 }
 
 function updateInkyPath() {
-    if (inkyRunning) {
+    if (ghostsRunning) {
         moveInkyRandomly();
     } 
-    else if (inkyScatter) {
+    else if (ghostsScatter) {
         inkyPath = aStar(inky, inkyScatterTarget); // Target the scatter tile when in scatter mode
     } 
     else {

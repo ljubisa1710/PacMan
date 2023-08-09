@@ -6,10 +6,7 @@ let blinky = {
     prevX: -1,
     prevY: -1
 };
-
-let blinkyRunning = false;
 let blinkyDead = false;
-let blinkyScatter = false;
 
 let blinkyPath;
 let blinkyScatterTarget = {x: 1, y: 1};
@@ -223,10 +220,10 @@ function updateBlinkyMode() {
 }
 
 function updateBlinkyPath() {
-    if (blinkyRunning) {
+    if (ghostsRunning) {
         moveBlinkyRandomly();
     } 
-    else if (blinkyScatter) {
+    else if (ghostsScatter) {
         blinkyPath = aStar(blinky, blinkyScatterTarget); // Target the scatter tile when in scatter mode
     } 
     else {

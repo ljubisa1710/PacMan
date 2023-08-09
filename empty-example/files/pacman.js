@@ -246,7 +246,7 @@ function pacmanDrawPath(path) {
     }
 }
 
-function pacmanDeath() {
+function checkCollisionWithGhosts() {
     if (pacman.x == blinky.x && pacman.y == blinky.y && blinkyRunning == false && blinkyDead == false) {
         num_lives--; 
         isPacmanDead = true;
