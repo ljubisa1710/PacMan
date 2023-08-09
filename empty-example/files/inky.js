@@ -1,14 +1,19 @@
 // inky's properties
 let inky = {
-    x: 26, // inky's x-coordinate
-    y: 29, // inky's y-coordinate
-    dir: 'LEFT',
+    x: 11, // inky's x-coordinate
+    y: 15, // inky's y-coordinate
+    dir: 'RIGHT',
     prevX: 26,
     prevY: 29
 };
 
+let inkyRunning = false;
+let inkyDead = false;
+let inkyScatter = false;
+
 let inkyPath;
 let inkyTarget;
+let inkyScatterTarget = {x: 26, y: 29};
 
 let inkyImgUp;
 let inkyImgDown;
@@ -16,11 +21,14 @@ let inkyImgLeft;
 let inkyImgRight;
 
 function inkyReset() {
-    inky.x = 26;
-    inky.y = 29;
-    dir = 'LEFT';
+    inky.x = 11;
+    inky.y = 15;
+    dir = 'RIGHT';
     prevX = -1;
     prevY = -1;
+    inkyRunning = false;
+    inkyDead = false;
+    inkyScatter = false;
 }
 
 function inkyLoadImages() {
@@ -70,34 +78,117 @@ function calculateInkyTarget() {
     return target;
 }
 
-// Function for inky to follow a given path
-function inkyFollowPath(path) {
+function moveInkyRandomly() {
     let newX = inky.x;
     let newY = inky.y;
-    let nextNode = path ? path[path.length - 2] : null; // Take the last node in the path
-
-    // If there's a path to follow, update direction accordingly
-    if (nextNode) {
-        let dx = nextNode.x - newX;
-        let dy = nextNode.y - newY;
-        let proposedDir;
-
-        if (Math.abs(dx) > Math.abs(dy)) {
-            proposedDir = dx > 0 ? 'RIGHT' : 'LEFT';
-        } else {
-            proposedDir = dy > 0 ? 'DOWN' : 'UP';
+    
+    // If inky is currently moving in a direction, continue in that direction
+    if (inky.dir) {
+        switch (inky.dir) {
+            case 'LEFT':
+                newX--;
+                break;
+            case 'RIGHT':
+                newX++;
+                break;
+            case 'UP':
+                newY--;
+                break;
+            case 'DOWN':
+                newY++;
+                break;
         }
-
-        // Ensure the proposed direction is not a 180-degree turn
-        if (!((inky.dir === 'LEFT' && proposedDir === 'RIGHT') ||
-              (inky.dir === 'RIGHT' && proposedDir === 'LEFT') ||
-              (inky.dir === 'UP' && proposedDir === 'DOWN') ||
-              (inky.dir === 'DOWN' && proposedDir === 'UP'))) {
-            inky.dir = proposedDir;
+        
+        // If the next move in the same direction is valid, continue moving
+        if (isValidMove(newX, newY)) {
+            return {newX, newY};
         }
     }
 
-    // Based on direction, set the new position
+    // If the above logic didn't return, inky is either not moving or has reached a wall.
+    // In this case, find a new random valid direction.
+    let directions = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
+    let validDirections = [];
+    
+    // Check each direction for validity
+    for (let dir of directions) {
+        let testX = inky.x;
+        let testY = inky.y;
+        
+        switch (dir) {
+            case 'LEFT':
+                testX--;
+                break;
+            case 'RIGHT':
+                testX++;
+                break;
+            case 'UP':
+                testY--;
+                break;
+            case 'DOWN':
+                testY++;
+                break;
+        }
+        
+        if (isValidMove(testX, testY) && !(testX === inky.prevX && testY === inky.prevY)) {
+            validDirections.push(dir);
+        }
+    }
+    
+    // Exclude the opposite direction to prevent 180-degree turns
+    validDirections = validDirections.filter(dir => {
+        return !((inky.dir === 'LEFT' && dir === 'RIGHT') ||
+                 (inky.dir === 'RIGHT' && dir === 'LEFT') ||
+                 (inky.dir === 'UP' && dir === 'DOWN') ||
+                 (inky.dir === 'DOWN' && dir === 'UP'));
+    });
+
+    if (validDirections.length > 0) {
+        // Pick a random direction from the valid directions
+        let randomDirection = validDirections[Math.floor(Math.random() * validDirections.length)];
+        
+        switch (randomDirection) {
+            case 'LEFT':
+                newX--;
+                break;
+            case 'RIGHT':
+                newX++;
+                break;
+            case 'UP':
+                newY--;
+                break;
+            case 'DOWN':
+                newY++;
+                break;
+        }
+        
+        inky.dir = randomDirection;
+    }
+
+    return {newX, newY};
+}
+
+function moveInkyAlongPath(nextNode) {
+    let newX = inky.x;
+    let newY = inky.y;
+    let dx = nextNode.x - newX;
+    let dy = nextNode.y - newY;
+    let proposedDir;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+        proposedDir = dx > 0 ? 'RIGHT' : 'LEFT';
+    } else {
+        proposedDir = dy > 0 ? 'DOWN' : 'UP';
+    }
+
+    // Ensure the proposed direction is not a 180-degree turn
+    if (!((inky.dir === 'LEFT' && proposedDir === 'RIGHT') ||
+          (inky.dir === 'RIGHT' && proposedDir === 'LEFT') ||
+          (inky.dir === 'UP' && proposedDir === 'DOWN') ||
+          (inky.dir === 'DOWN' && proposedDir === 'UP'))) {
+        inky.dir = proposedDir;
+    }
+
     switch (inky.dir) {
         case 'LEFT':
             newX--;
@@ -111,6 +202,24 @@ function inkyFollowPath(path) {
         case 'DOWN':
             newY++;
             break;
+    }
+
+    return {newX, newY};
+}
+
+function inkyFollowPath(path) {
+    let newX, newY;
+    let nextNode = path ? path[path.length - 2] : null;
+
+    // If path length is 1, move randomly
+    if (path && path.length === 1) {
+        let randomMove = moveInkyRandomly();
+        newX = randomMove.newX;
+        newY = randomMove.newY;
+    } else if (nextNode) { // If there's a path to follow, update direction accordingly
+        let pathMove = moveInkyAlongPath(nextNode);
+        newX = pathMove.newX;
+        newY = pathMove.newY;
     }
 
     // Check for the wraparound conditions
@@ -133,8 +242,46 @@ function inkyFollowPath(path) {
     }
 }
 
-  
-  
+function updateInkyMode() {
+    let elapsedTime = millis() - modeStartTime;
+
+    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
+        // Switch to the next mode
+        currentModeIndex++;
+        
+        // Reset the timer for the next mode
+        modeStartTime = millis();
+    }
+
+    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
+        inkyScatter = true;
+        inkyRunning = false;
+    } 
+    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
+        inkyScatter = false;
+        inkyRunning = false; // Reset frightened mode when switching to chase
+    }
+}
+
+function updateInkyPath() {
+    if (inkyRunning) {
+        moveInkyRandomly();
+    } 
+    else if (inkyScatter) {
+        inkyPath = aStar(inky, inkyScatterTarget); // Target the scatter tile when in scatter mode
+    } 
+    else {
+        inkyTarget = calculateInkyTarget();
+        inkyPath = aStar(inky, inkyTarget); // Target Pac-Man when in chase mode
+    }
+}
+
+function inkyFrameUpdate() {
+    if (frameCount % ghostSpeed === 0) {
+        inkyFollowPath(inkyPath); 
+    }
+}
+   
 // Function to draw inky
 function drawInky() {
     switch(inky.dir) {

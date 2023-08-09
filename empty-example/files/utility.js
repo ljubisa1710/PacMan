@@ -1,3 +1,29 @@
+let runningImgDown;
+let runningImgUp;
+let runningImgLeft;
+let runningImgRight;
+
+let scatterChaseSequence = [
+    { mode: "SCATTER", duration: 7000 },
+    { mode: "CHASE", duration: 20000 },
+    { mode: "SCATTER", duration: 7000 },
+    { mode: "CHASE", duration: 20000 },
+    { mode: "SCATTER", duration: 5000 },
+    { mode: "CHASE", duration: 20000 },
+    { mode: "SCATTER", duration: 5000 },
+    { mode: "CHASE", duration: Infinity }  // Infinite chase after the last scatter
+];
+
+let currentModeIndex = 0;
+let modeStartTime = 0;
+
+function loadRunningImages() {
+  runningImgDown = loadImage('pictures/ghosts/running/running_down.png');
+  runningImgUp = loadImage('pictures/ghosts/running/running_up.png');
+  runningImgLeft = loadImage('pictures/ghosts/running/running_left.png');
+  runningImgRight = loadImage('pictures/ghosts/running/running_right.png');
+}
+
 // Function to draw the grid
 function drawGrid() {
     for (let i = 0; i < grid.length; i++) {
@@ -12,70 +38,6 @@ function drawGrid() {
     }
   }
 
-// Function to find junctions on the grid
-function findJunctions() {
-    allowedUpdatePositions = []; // Clear the allowed update positions array
-
-    // Iterate through the grid
-    for (let x = 0; x < grid.length; x++) {
-        for (let y = 0; y < grid[x].length; y++) {
-        if (isJunction(x, y)) {
-            allowedUpdatePositions.push({ x, y }); // Add junction coordinates to the allowed update positions array
-        }
-        }
-    }
-}
-
-// Function to check if a given position is a junction
-function isJunction(x, y) {
-    if (grid[x][y] === 1) {
-        return false; // Not a valid position
-    }
-
-    let adjacentPaths = 0; // Counter for adjacent paths
-
-    // Check adjacent positions for paths
-    if (isValidMove(x-1, y)) {
-        adjacentPaths++;
-    }
-    if (isValidMove(x+1, y)) {
-        adjacentPaths++;
-    }
-    if (isValidMove(x, y-1)) {
-        adjacentPaths++;
-    }
-    if (isValidMove(x, y+1)) {
-        adjacentPaths++;
-    }
-
-    if (adjacentPaths >= 3) {
-        return true;
-    } else if (adjacentPaths < 2) {
-        return false;
-    }
-
-    if (adjacentPaths == 2) {
-        let straight = false;
-
-        if (isValidMove(x-1, y)) {
-            if (isValidMove(x+1, y)) {
-                straight = true;
-            }
-        }
-
-        if (isValidMove(x, y-1)) {
-            if (isValidMove(x, y+1)) {
-                straight = true;
-            }
-        }
-
-        if (straight) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-}
 
 // Function to add walls to the grid
 function addWallSection(x1, x2, y1, y2, mirror) {
@@ -90,8 +52,13 @@ function addWallSection(x1, x2, y1, y2, mirror) {
 }
 
 function isValidMove(x, y) {
+    
+    if (isNaN(x) || isNaN(y)) {
+        return false;
+    }
+
     // Check array bounds
-    if (x < 0 || y < 0 || x >= grid.length || y >= grid[0].length) {
+    if ((x < 0) || (y < 0) || (x > grid_x) || (y > grid_y)) {
         return false;
     }
 
@@ -141,6 +108,22 @@ function addWalls() {
 
     grid[27][14] = 0;
     grid[0][14] = 0;
+
+    grid[13][12] = 0;
+    grid[14][12] = 0;
+
+    // Define hollow section dimensions 
+    let hollowStartX = 11;
+    let hollowEndX = 16;
+    let hollowStartY = 13;
+    let hollowEndY = 15;
+
+    // Hollow out the middle section
+    for (let i = hollowStartX; i <= hollowEndX; i++) {
+        for (let j = hollowStartY; j <= hollowEndY; j++) {
+            grid[i][j] = 0; // Making the section hollow
+        }
+    }
 }
 
 function getTiles() {
@@ -153,4 +136,69 @@ function getTiles() {
     const tileY = Math.floor(mouseY / tileHeight);
 
     return [tileX, tileY];
+}
+
+// Function to find junctions on the grid
+function findJunctions() {
+  allowedUpdatePositions = []; // Clear the allowed update positions array
+
+  // Iterate through the grid
+  for (let x = 0; x < grid.length; x++) {
+      for (let y = 0; y < grid[x].length; y++) {
+      if (isJunction(x, y)) {
+          allowedUpdatePositions.push({ x, y }); // Add junction coordinates to the allowed update positions array
+      }
+      }
+  }
+}
+
+// Function to check if a given position is a junction
+function isJunction(x, y) {
+  if (grid[x][y] === 1) {
+      return false; // Not a valid position
+  }
+
+  let adjacentPaths = 0; // Counter for adjacent paths
+
+  // Check adjacent positions for paths
+  if (isValidMove(x-1, y)) {
+      adjacentPaths++;
+  }
+  if (isValidMove(x+1, y)) {
+      adjacentPaths++;
+  }
+  if (isValidMove(x, y-1)) {
+      adjacentPaths++;
+  }
+  if (isValidMove(x, y+1)) {
+      adjacentPaths++;
+  }
+
+  if (adjacentPaths >= 3) {
+      return true;
+  } else if (adjacentPaths < 2) {
+      return false;
+  }
+
+  if (adjacentPaths == 2) {
+      let straight = false;
+
+      if (isValidMove(x-1, y)) {
+          if (isValidMove(x+1, y)) {
+              straight = true;
+          }
+      }
+
+      if (isValidMove(x, y-1)) {
+          if (isValidMove(x, y+1)) {
+              straight = true;
+          }
+      }
+
+      if (straight) {
+          return false;
+      } else {
+          return true;
+      }
+  }
 }

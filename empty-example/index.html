@@ -21,43 +21,57 @@
     }
 
     #title {
-      font-size: 50px;
+      font-size: 70px;
       color: rgb(255, 255, 255);
       position: relative;
-      top: -45px;
+      top: 0px;
       right: 0px;
     }
 
     #showPath {
       position: relative;
-      top: -36px;
-      left: 325px;
+      top: -12px;
+      left: -322px;
     }
 
     #resetGhosts {
       position: relative;
-      top: -32px;
-      left: 332px;
+      top: -34px;
+      left: 328px;
     }
 
     #playSound {
       position: relative;
-      top: -28px;
-      left: 327px;
+      top: -29px;
+      left: -323px;
+    }
+
+    #resetGame {
+      position: relative;
+      top: -52px;
+      left: 325px;
     }
 
     #score {
       font-size: 50px;
       color: rgb(255, 255, 255);
       position: relative;
-      top: -29px;
-      right: 0px;
+      top: 0px;
+      right: 200px;
+    }
+
+    #lives {
+      font-size: 50px;
+      color: rgb(255, 255, 255);
+      position: relative;
+      top: -59px;
+      right: -200px;
     }
 
     canvas {
       border: 1px solid white;
       position: relative;
-      top: -100px
+      top: -155px
     }
   </style>
 
@@ -78,9 +92,11 @@
 <body>
   <div id="title">Pac-Man</div>
   <div id="score">Score: 0</div>
+  <div id="lives">Lives: 3</div>
   <button id="showPath">Show Path</button>
   <button id="resetGhosts">Reset Ghosts</button>
   <button id="playSound">Play Sound</button>
+  <button id="resetGame">Reset Game</button>
 </body>
 
 </html>

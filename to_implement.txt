@@ -1,0 +1,76 @@
+## Pseudo-Code Plan
+
+1. **Frighten the Ghosts**:
+   - When Pac-Man eats a Power Pellet, we should set all the ghosts to a frightened mode.
+   - Each ghost will have a state attribute (e.g., `NORMAL`, `FRIGHTENED`, `EATEN`).
+   - When a Power Pellet is consumed, all ghosts' states are changed to `FRIGHTENED` for a certain duration.
+   - Ghosts in the `FRIGHTENED` state will either move slower or change their movement patterns (like moving randomly).
+   
+2. **Check Collisions with Ghosts**:
+   - During each frame, check if Pac-Man's position overlaps with any of the ghosts.
+   - If Pac-Man overlaps with a ghost:
+     - If the ghost's state is `FRIGHTENED`, Pac-Man eats the ghost and the ghost transitions to the `EATEN` state.
+     - If the ghost's state is `NORMAL`, Pac-Man is caught by the ghost and loses a life.
+     - If the ghost's state is `EATEN`, ignore the collision.
+
+3. **Handle Eating a Frightened Ghost**:
+   - When a ghost is eaten:
+     - The ghost's state changes to `EATEN`.
+     - Pac-Man scores points for eating the ghost.
+     - The ghost turns white (or any other indication you prefer).
+     - The ghost heads back to its home using a predefined path or the shortest available route. During this time, it doesn't interact with Pac-Man.
+     - Once the ghost reaches its home, it returns to the `NORMAL` state and resumes chasing Pac-Man.
+
+4. **End Frightened Mode**:
+   - After a set duration, any ghost still in the `FRIGHTENED` state returns to the `NORMAL` state.
+
+## Sample Functions
+
+```javascript
+function eatPowerPellet() {
+    for (let ghost of ghosts) {
+        ghost.state = 'FRIGHTENED';
+    }
+    // Start a timer to end the frightened mode after a certain duration
+    setTimeout(endFrightenedMode, frightenedDuration);
+}
+
+function checkCollisionWithGhosts(pacman, ghosts) {
+    for (let ghost of ghosts) {
+        if (pacman.x === ghost.x && pacman.y === ghost.y) {
+            if (ghost.state === 'FRIGHTENED') {
+                eatFrightenedGhost(ghost);
+            } else if (ghost.state === 'NORMAL') {
+                pacmanLoseLife();
+            }
+            // For EATEN state, do nothing, as they should not collide.
+        }
+    }
+}
+
+function eatFrightenedGhost(ghost) {
+    ghost.state = 'EATEN';
+    score += ghostPoints; // Increase Pac-Man's score
+
+    // Change ghost's color to white
+    ghost.color = 'white';
+
+    // Make the ghost move towards its home (this can be done through a pathfinding algorithm or a predefined path)
+    returnGhostToHome(ghost);
+}
+
+function returnGhostToHome(ghost) {
+    // Logic to move the ghost back to its home position, avoiding obstacles
+    // Once the ghost reaches its home:
+    ghost.state = 'NORMAL';
+    ghost.color = ghost.defaultColor; // Assuming each ghost has a default color
+}
+
+function endFrightenedMode() {
+    for (let ghost of ghosts) {
+        if (ghost.state === 'FRIGHTENED') {
+            ghost.state = 'NORMAL';
+        }
+    }
+}
+```

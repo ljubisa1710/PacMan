@@ -9,9 +9,25 @@ let isFollowingPath = false;
 let pacmanTarget = {x: -1, y: -1}; // Initial target coordinates for Pac-Man
 let pacmanPath;
 
+let isPacmanDead = false;
+let powerTime = false;
+
 let pacmanImages = [];
 let imageTracker = 0;
 let pacmanWaka;
+
+let num_lives = 3;
+
+function resetPacman() {
+    pacman.x = 13; // Pac-Man's x-coordinate
+    pacman.y = 11; // Pac-Man's y-coordinate
+    pacman.dir = 'RIGHT'; // Pac-Man's initial direction
+    isPacmanDead = false;
+    isFollowingPath = false;
+    pacmanTarget = {x: -1, y: -1};
+    imageTracker = 0;
+    powerTime = false;
+}
 
 function pacmanPlaySound() {
     pacmanWaka.play();
@@ -37,7 +53,7 @@ function pacmanEatPellet() {
             // If they match, remove this pellet from the array
             pellets.splice(i, 1);
             // Since we found a match and removed a pellet, we can break the loop after increasing the score
-            score++;
+            score = score + 10;
             break;
         }
     }
@@ -49,27 +65,11 @@ function pacmanEatPellet() {
             // If they match, remove this pellet from the array
             powerPellets.splice(i, 1);
             // Since we found a match and removed a pellet, we can break the loop after increasing the score
-            score = score + 10;
+            score = score + 50;
+            powerTime = true;
             break;
         }
     }
-}
-
-function isPacmanMoving() {
-    let newX = pacman.x;
-    let newY = pacman.y;
-
-    if (pacman.dir === 'LEFT') {
-        newX--;
-    } else if (pacman.dir === 'RIGHT') {
-        newX++;
-    } else if (pacman.dir === 'UP') {
-        newY--;
-    } else if (pacman.dir === 'DOWN') {
-        newY++;
-    }
-
-    return isValidMove(newX, newY);
 }
 
 function pacmanPathFind(tileX, tileY) {
@@ -127,6 +127,11 @@ function handleMovement() {
             newX = 27;
         } else if (newX > 27 && newY === 14) {
             newX = 0;
+        }
+        
+        // Check to see if the new position matches the conditions you provided
+        if ((newX === 13 && newY === 12) || (newX === 14 && newY === 12)) {
+            return false;
         }
 
         // Check if the new position is a wall
@@ -239,4 +244,27 @@ function pacmanDrawPath(path) {
             rect(node.x * 20, node.y * 20, 20, 20); // Draw rectangles for path
         }
     }
+}
+
+function pacmanDeath() {
+    if (pacman.x == blinky.x && pacman.y == blinky.y && blinkyRunning == false && blinkyDead == false) {
+        num_lives--; 
+        isPacmanDead = true;
+    } else if (pacman.x == pinky.x && pacman.y == pinky.y && pinkyRunning == false && pinkyDead == false) {
+        num_lives--; 
+        isPacmanDead = true; 
+    } else if (pacman.x == inky.x && pacman.y == inky.y && inkyRunning == false && inkyDead == false) {
+        num_lives--; 
+        isPacmanDead = true; 
+    } else if (pacman.x == clyde.x && pacman.y == clyde.y && clydeRunning == false && clydeDead == false) {
+        num_lives--; 
+        isPacmanDead = true; 
+    }
+}
+
+function pacmanFrameUpdate() {
+  // Move Pac-Man every 'speed' frames
+  if (frameCount % pacManSpeed === 0) {
+    handleMovement();
+  }
 }

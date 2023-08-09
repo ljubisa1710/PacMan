@@ -54,6 +54,8 @@ function removePellets() {
       {start: {x: 1, y: 23}, end: {x: 1, y: 23}},
       {start: {x: 26, y: 23}, end: {x: 26, y: 23}},
       {start: {x: 15, y: 9}, end: {x: 15, y: 10}},
+      {start: {x: 11, y: 13}, end: {x: 16, y: 15}},
+      {start: {x: 13, y: 12}, end: {x: 14, y: 12}}
   ];
 
   // Iterate through the coordinates

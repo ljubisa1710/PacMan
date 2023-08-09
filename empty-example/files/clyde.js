@@ -1,15 +1,19 @@
 // clyde's properties
 let clyde = {
-    x: 1, // clyde's x-coordinate
-    y: 29, // clyde's y-coordinate
-    dir: 'RIGHT',
+    x: 16, // clyde's x-coordinate
+    y: 13, // clyde's y-coordinate
+    dir: 'LEFT',
     prevX: -1,
     prevY: -1
 };
 
+let clydeRunning = false;
+let clydeDead = false;
+let clydeScatter = false;
+
 let clydePath;
 let clydeTarget;
-let clydeRunTarget = {x: 1, y: 29};
+let clydeScatterTarget = {x: 1, y: 29};
 
 let clydeImgUp;
 let clydeImgDown;
@@ -17,11 +21,14 @@ let clydeImgLeft;
 let clydeImgRight;
 
 function clydeReset() {
-    clyde.x = 1;
-    clyde.y = 29;
-    dir = 'RIGHT';
+    clyde.x = 16;
+    clyde.y = 13;
+    dir = 'LEFT';
     prevX = -1;
     prevY = -1;
+    clydeRunning = false;
+    clydeDead = false;
+    clydeScatter = false;
 }
 
 function clydeLoadImages() {
@@ -32,14 +39,74 @@ function clydeLoadImages() {
 }
   
 function moveClydeRandomly() {
-    let newX, newY, randomDirection;
+    let newX = clyde.x;
+    let newY = clyde.y;
+    
+    // If clyde is currently moving in a direction, continue in that direction
+    if (clyde.dir) {
+        switch (clyde.dir) {
+            case 'LEFT':
+                newX--;
+                break;
+            case 'RIGHT':
+                newX++;
+                break;
+            case 'UP':
+                newY--;
+                break;
+            case 'DOWN':
+                newY++;
+                break;
+        }
+        
+        // If the next move in the same direction is valid, continue moving
+        if (isValidMove(newX, newY)) {
+            return {newX, newY};
+        }
+    }
+
+    // If the above logic didn't return, clyde is either not moving or has reached a wall.
+    // In this case, find a new random valid direction.
     let directions = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
+    let validDirections = [];
+    
+    // Check each direction for validity
+    for (let dir of directions) {
+        let testX = clyde.x;
+        let testY = clyde.y;
+        
+        switch (dir) {
+            case 'LEFT':
+                testX--;
+                break;
+            case 'RIGHT':
+                testX++;
+                break;
+            case 'UP':
+                testY--;
+                break;
+            case 'DOWN':
+                testY++;
+                break;
+        }
+        
+        if (isValidMove(testX, testY) && !(testX === clyde.prevX && testY === clyde.prevY)) {
+            validDirections.push(dir);
+        }
+    }
+    
+    // Exclude the opposite direction to prevent 180-degree turns
+    validDirections = validDirections.filter(dir => {
+        return !((clyde.dir === 'LEFT' && dir === 'RIGHT') ||
+                 (clyde.dir === 'RIGHT' && dir === 'LEFT') ||
+                 (clyde.dir === 'UP' && dir === 'DOWN') ||
+                 (clyde.dir === 'DOWN' && dir === 'UP'));
+    });
 
-    do {
-        randomDirection = directions[Math.floor(Math.random() * directions.length)];
-        newX = clyde.x;
-        newY = clyde.y;
-
+    if (validDirections.length > 0) {
+        // Pick a random direction from the valid directions
+        let randomDirection = validDirections[Math.floor(Math.random() * validDirections.length)];
+        
         switch (randomDirection) {
             case 'LEFT':
                 newX--;
@@ -54,13 +121,7 @@ function moveClydeRandomly() {
                 newY++;
                 break;
         }
-    } while (!isValidMove(newX, newY) || (newX === clyde.prevX && newY === clyde.prevY)); 
-
-    // Ensure the random direction is not a 180-degree turn
-    if (!((clyde.dir === 'LEFT' && randomDirection === 'RIGHT') ||
-          (clyde.dir === 'RIGHT' && randomDirection === 'LEFT') ||
-          (clyde.dir === 'UP' && randomDirection === 'DOWN') ||
-          (clyde.dir === 'DOWN' && randomDirection === 'UP'))) {
+        
         clyde.dir = randomDirection;
     }
 
@@ -149,7 +210,7 @@ function calculateClydeTarget() {
     if (distance > 8) {
         target = {x: pacman.x, y: pacman.y};
     } else {
-        target = {x: clydeRunTarget.x, y: clydeRunTarget.y};
+        target = {x: clydeScatterTarget.x, y: clydeScatterTarget.y};
     }
 
     return target;
@@ -172,6 +233,46 @@ function drawClyde() {
             break;
         default:
             image(clydeImgDown, clyde.x * 20, clyde.y * 20, 20, 20);
+    }
+}
+
+function updateClydeMode() {
+    let elapsedTime = millis() - modeStartTime;
+
+    if (elapsedTime > scatterChaseSequence[currentModeIndex].duration) {
+        // Switch to the next mode
+        currentModeIndex++;
+        
+        // Reset the timer for the next mode
+        modeStartTime = millis();
+    }
+
+    if (scatterChaseSequence[currentModeIndex].mode === "SCATTER") {
+        clydeScatter = true;
+        clydeRunning = false;
+    } 
+    else if (scatterChaseSequence[currentModeIndex].mode === "CHASE") {
+        clydeScatter = false;
+        clydeRunning = false; // Reset frightened mode when switching to chase
+    }
+}
+
+function updateClydePath() {
+    if (clydeRunning) {
+        moveClydeRandomly();
+    } 
+    else if (clydeScatter) {
+        clydePath = aStar(clyde, clydeScatterTarget); // Target the scatter tile when in scatter mode
+    } 
+    else {
+        clydeTarget = calculateClydeTarget();
+        clydePath = aStar(clyde, clydeTarget); // Target Pac-Man when in chase mode
+    }
+}
+
+function clydeFrameUpdate() {
+    if (frameCount % ghostSpeed === 0) {
+        clydeFollowPath(clydePath); 
     }
 }
 
