@@ -67,8 +67,6 @@ function resetGhosts() {
   blinkyReset();
   clydeReset();
   inkyReset();
-
-  initializeGhostPaths();
 }
 
 function updateGhostsPaths() {
@@ -83,17 +81,6 @@ function updateGhostsModes() {
   if (!pinkyRunning && !pinkyDead) updatePinkyMode();
   if (!inkyRunning && !inkyDead) updateInkyMode();
   if (!clydeRunning && !clydeDead) updateClydeMode();
-}
-
-function mouseClicked() {
-  let tiles = getTiles();
-  let tileX = tiles[0];
-  let tileY = tiles[1];
-  console.log(tileX, tileY);
-  
-  if (isValidMove(tileX, tileY)) {
-    pacmanPathFind(tileX, tileY);
-  }
 }
 
 function resetGame() {
@@ -130,7 +117,6 @@ function setup() {
   currentTime = millis();
   resetPacman();
   resetGhosts();
-  initializeGhostPaths();
 
   // Get the button element and set up the event handler
   let vision_btn = select('#showPath');
@@ -184,6 +170,16 @@ function displayDeathScreen() {
   text("You died!", width / 2, height / 2);
 }
 
+function displayWinScreen() {
+  background(220);
+  fill(0); // Text color
+  textSize(32);
+  textAlign(CENTER, CENTER);
+  document.getElementById('lives').textContent = `Lives: ${num_lives}`;
+  document.getElementById('score').textContent = `Score: ${score}`;
+  text("You win!", width / 2, height / 2);
+}
+
 // p5.js draw function that is called in a loop
 function draw() {
   background(220); // Set background color
@@ -194,6 +190,9 @@ function draw() {
     return; // Exit the draw function early
   } else if (isPacmanDead && (num_lives > 0)) {
     newLife();
+  } else if (pellets.length == 0) {
+    displayWinScreen();
+    return; // Exit the draw function early
   }
 
   // Update the displayed score and lives

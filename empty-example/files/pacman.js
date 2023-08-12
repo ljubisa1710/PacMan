@@ -268,28 +268,28 @@ function pacmanStandardCollision() {
 function pacmanEatGhosts() {
     if (pacman.x == blinky.x && pacman.y == blinky.y && blinkyRunning == true && blinkyDead == false) {
         ghostsEaten++;
-        score += 200 ^ ghostsEaten;
+        score += ((2 ** ghostsEaten) * 100);
         blinkyRunning = false;
         blinkyDead = true;
         blinkyChangeImage();
         blinkyHomePath();
     } else if (pacman.x == pinky.x && pacman.y == pinky.y && pinkyRunning == true && pinkyDead == false) {
         ghostsEaten++;
-        score += 200 ^ ghostsEaten;
+        score += ((2 ** ghostsEaten) * 100);
         pinkyRunning = false;
         pinkyDead = true;
         pinkyChangeImage();
         pinkyHomePath();
     } else if (pacman.x == inky.x && pacman.y == inky.y && inkyRunning == true && inkyDead == false) {
         ghostsEaten++;
-        score += 200 ^ ghostsEaten;
+        score += ((2 ** ghostsEaten) * 100);
         inkyRunning = false;
         inkyDead = true;
         inkyChangeImage();
         inkyHomePath();
     } else if (pacman.x == clyde.x && pacman.y == clyde.y && clydeRunning == true && clydeDead == false) {
         ghostsEaten++;
-        score += 200 ^ ghostsEaten;
+        score += ((2 ** ghostsEaten) * 100);
         clydeRunning = false;
         clydeDead = true;
         clydeChangeImage();
